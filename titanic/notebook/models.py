@@ -11,14 +11,14 @@ class LGB:
             lgb.Dataset(X_train, label=y_train, categorical_feature=self.categorical), 
             valid_sets=[lgb.Dataset(X_valid, label=y_valid, categorical_feature=self.categorical)]
         )
-        self.feature = X_train.columns
+        self.features = X_train.columns
         return self.model
     def predict(self, X_test):
-        return self.model.predict(X_test)
+        return self.model.predict(X_test[self.features])
     def feature_importance(self, importance_type="gain"):
         importances = self.model.feature_importance(importance_type=importance_type)
         return pd.DataFrame({
-            "feature": self.feature,
+            "feature": self.features,
             "importance": importances
         })
 
@@ -34,7 +34,7 @@ class RF:
         self.features = X_train.columns
         return self.model
     def predict(self, X_test):
-        return self.model.predict_proba(X_test)[:, 1]
+        return self.model.predict_proba(X_test[self.features])[:, 1]
     def feature_importance(self):
         return pd.DataFrame({
             "feature": self.features,
@@ -47,6 +47,7 @@ class CAT:
         self.model = None
         self.categorical = categorical
     def train(self, X_train, X_valid, y_train, y_valid, params):
+        X_train, X_valid = X_train.astype(str), X_valid.astype(str)
         cat_features = [X_train.columns.get_loc(col) for col in self.categorical]
         self.model = CatBoostClassifier(**params)
         self.model.fit(
@@ -56,7 +57,8 @@ class CAT:
         self.features = X_train.columns
         return self.model
     def predict(self, X_test):
-        return self.model.predict_proba(X_test)[:, 1]
+        X_test = X_test.astype(str)
+        return self.model.predict_proba(X_test[self.features])[:, 1]
     def feature_importance(self):
         importances = self.model.get_feature_importance()
         return pd.DataFrame({
@@ -75,7 +77,7 @@ class LR:
         self.features = X_train.columns
         return self.model
     def predict(self, X_test):
-        return self.model.predict_proba(X_test)[:, 1]
+        return self.model.predict_proba(X_test[self.features])[:, 1]
     def feature_importance(self):
         coef = self.model.coef_.flatten()
         return pd.DataFrame({

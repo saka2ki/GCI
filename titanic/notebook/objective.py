@@ -1,13 +1,13 @@
 import numpy as np
 import optuna
 optuna.logging.set_verbosity(optuna.logging.WARNING)
-from sklearn.model_selection import train_test_split, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
 from tqdm.notebook import tqdm
 
 class Objective:
     def __init__(self, X, y, model, params, numerical, categorical, n_trial=100):
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        self.X, self.y = X[numerical+categorical], y
         self.model, self.params = model, params
         self.numerical, self.categorical, self.n_trial = numerical, categorical, n_trial
         self.pbar = tqdm(total=n_trial)
@@ -25,9 +25,9 @@ class Objective:
         y_preds = []
         models = []
         sfk = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-        for train_idx, valid_idx in sfk.split(self.X_train, self.y_train):
-            X_train, X_valid = self.X_train.iloc[train_idx], self.X_train.iloc[valid_idx]
-            y_train, y_valid = self.y_train.iloc[train_idx], self.y_train.iloc[valid_idx]
+        for train_idx, valid_idx in sfk.split(self.X, self.y):
+            X_train, X_valid = self.X.iloc[train_idx], self.X.iloc[valid_idx]
+            y_train, y_valid = self.y.iloc[train_idx], self.y.iloc[valid_idx]
 
             model = self.model(self.categorical)
             model.train(
