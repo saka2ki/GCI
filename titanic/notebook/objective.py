@@ -24,7 +24,7 @@ class Objective:
         y_valids = []
         y_preds = []
         models = []
-        sfk = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        sfk = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
         for train_idx, valid_idx in sfk.split(self.X, self.y):
             X_train, X_valid = self.X.iloc[train_idx], self.X.iloc[valid_idx]
             y_train, y_valid = self.y.iloc[train_idx], self.y.iloc[valid_idx]

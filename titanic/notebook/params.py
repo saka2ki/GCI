@@ -20,8 +20,8 @@ def lgb_params(trial):
 
 def rf_params(trial):
     params = {
-        'n_estimators': trial.suggest_int('n_estimators', 50, 300),
-        'max_depth': trial.suggest_int('max_depth', 3, 20),
+        'n_estimators': trial.suggest_int('n_estimators', 50, 200),
+        'max_depth': trial.suggest_int('max_depth', 3, 5),
         'min_samples_split': trial.suggest_int('min_samples_split', 4, 30),
         'min_samples_leaf': trial.suggest_int('min_samples_leaf', 4, 30),
         'max_features': trial.suggest_categorical('max_features', ['sqrt', 'log2', None]),
@@ -35,13 +35,13 @@ def cat_params(trial):
     params = {
         'loss_function': 'Logloss',
         'eval_metric': 'AUC',
-        'depth': trial.suggest_int('depth', 3, 10),
+        'depth': trial.suggest_int('depth', 3, 5),
         'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1, log=True),
-        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1.0, 10.0),
-        'iterations': trial.suggest_int('iterations', 50, 300),
+        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 10.0, 30.0),
+        'iterations': trial.suggest_int('iterations', 50, 200),
         'random_seed': 42,
         'verbose': 0,
-        'early_stopping_rounds': 30,
+        'early_stopping_rounds': 10,
         #'task_type': 'GPU',  # Uncomment if GPU is available
     }
     return params
