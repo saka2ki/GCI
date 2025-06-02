@@ -34,11 +34,11 @@ def rf_params(trial):
 def cat_params(trial):
     params = {
         'loss_function': 'Logloss',
-        'eval_metric': 'AUC',
+        'eval_metric': 'BalancedAccuracy',
         'depth': trial.suggest_int('depth', 3, 5),
         'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.1, log=True),
-        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 10.0, 30.0),
-        'iterations': trial.suggest_int('iterations', 50, 200),
+        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 10.0, 50.0),
+        'iterations': trial.suggest_int('iterations', 50, 300),
         'random_seed': 42,
         'verbose': 0,
         'early_stopping_rounds': 10,
@@ -50,10 +50,11 @@ def lr_params(trial):
     penalty = trial.suggest_categorical('penalty', ['l1', 'l2', 'elasticnet'])
     solver = 'saga'  # 全penaltyに対応
     params = {
-        'C': trial.suggest_float('C', 1e-4, 10.0, log=True),
+        'C': trial.suggest_float('C', 1e-4, 1.0, log=True),
         'penalty': penalty,
         'solver': solver,
-        'max_iter': trial.suggest_int('max_iter', 6000, 10000),
+        'max_iter': trial.suggest_int('max_iter', 8000, 12000),
+        'class_weight': 'balanced',
         'random_state': 42
     }
     if penalty == 'elasticnet':

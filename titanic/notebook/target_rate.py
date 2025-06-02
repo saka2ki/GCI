@@ -46,7 +46,7 @@ def target_rate(df_train, df_test, numerical_feature, boolean_feature, target, n
     #plt.show()
 ######################################################################################################################################################################
     length = len(numerical + categorical)
-    f, ax = plt.subplots(3, length, figsize=(4*length, 10), facecolor='gray')
+    f, ax = plt.subplots(3, length, figsize=(4*length, 10), facecolor='gray', squeeze=False)
     i = 0
     
     for col in numerical + categorical:
