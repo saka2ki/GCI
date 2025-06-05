@@ -60,3 +60,16 @@ def lr_params(trial):
     if penalty == 'elasticnet':
         params['l1_ratio'] = trial.suggest_float('l1_ratio', 0.0, 1.0)
     return params
+
+def lsv_params(trial):
+    params = {
+        'kernel': 'linear',
+        'C': trial.suggest_float('C', 1e-4, 1.0, log=True),
+        'class_weight': 'balanced',
+        'probability': True,
+        'max_iter': trial.suggest_int('max_iter', 98000, 100000),
+        'tol': trial.suggest_float('tol', 1e-5, 1e-2, log=True),
+        'shrinking': trial.suggest_categorical('shrinking', [True, False]),
+    }
+    return params
+
