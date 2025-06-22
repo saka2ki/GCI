@@ -2,7 +2,7 @@ import numpy as np
 import optuna
 optuna.logging.set_verbosity(optuna.logging.WARNING)
 from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score
 from tqdm.notebook import tqdm
 
 class Objective:
@@ -24,7 +24,7 @@ class Objective:
         y_valids = []
         y_preds = []
         models = []
-        sfk = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+        sfk = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
         for train_idx, valid_idx in sfk.split(self.X, self.y):
             X_train, X_valid = self.X.iloc[train_idx], self.X.iloc[valid_idx]
             y_train, y_valid = self.y.iloc[train_idx], self.y.iloc[valid_idx]
@@ -35,19 +35,19 @@ class Objective:
             )
             y_pred_prob = model.predict(X_valid)
             
-            score = accuracy_score(y_valid, (y_pred_prob > 0.5).astype(int))
+            score = roc_auc_score(y_valid, y_pred_prob)
             scores.append(score)
             y_valids.extend(y_valid)
             y_preds.extend(y_pred_prob)
             models.append(model)
     
-        if self.best_score is None or np.min(scores) > np.min(self.best_score):
+        if self.best_score is None or np.mean(scores) > np.mean(self.best_score):
             self.best_score = scores
             self.best_y_valid = np.array(y_valids)
             self.best_y_pred = np.array(y_preds)
             self.best_model = models
         self.pbar.update(1)
-        return 1 - np.min(scores)
+        return 1 - np.mean(scores)
 
 
 
